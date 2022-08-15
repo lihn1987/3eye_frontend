@@ -18,7 +18,9 @@
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
+    "@polkadot/extension-dapp": "^0.44.1",
     "autoprefixer": "^7.1.2",
+    "axios": "^0.27.2",
     "babel-core": "^6.22.1",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
     "babel-loader": "^7.1.1",

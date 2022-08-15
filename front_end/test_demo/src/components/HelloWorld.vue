@@ -1,26 +1,39 @@
 <template>
   <div class="hello">
-    <input type="file" @change="handleChange" />
+    <input type="file" ref="upload_file" @change="handleChange" />
+    
     <div style="display:flex">
-      <div style="line-height: 24px;">file hash:</div>
-      <div style="line-height: 24px;margin-left:24px" :class="hash_state">{{file_hash}}</div>
+      <div style="line-height: 40px; width: 128px">file hash:</div>
+      <el-input
+        placeholder="请输入内容"
+        v-model="file_hash"
+        :disabled="true">
+      </el-input>
     </div>
+    <el-button size="small" type="success" @click="upload">上传到服务器</el-button>
 
 
-    <el-upload
+    <!-- <el-upload
       class="upload-demo"
       ref="upload"
-      action="https://jsonplaceholder.typicode.com/posts/"
+      action="/api/upload/"
+      @change="handleChange"
       :auto-upload="false"
       :multiple = "false">
       <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-      <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-    </el-upload>
+      <el-button style="margin-left: 10px;" size="small" type="success" @click="upload">上传到服务器</el-button>
+    </el-upload> -->
   </div>
 </template>
 
 <script>
 import crypto from "crypto"
+import axios from "axios"
+// import {
+//   web3Accounts,
+//   web3Enable,
+// } from '@polkadot/extension-dapp';
+
 export default {
   name: 'HelloWorld',
   data () {
@@ -28,11 +41,16 @@ export default {
       msg: 'Welcome to Your Vue.js App',
       hash_state: "normal",
       file_hash:"unknown",
+      upload_file: null,
     }
+  },
+  mounted(){
+    alert("???")
   },
   methods: {
     handleChange: function(event) {
       let file = event.target.files[0]
+      this.upload_file = file
       console.log(file.name)
       console.log(file.size)
       console.log(file)
@@ -46,6 +64,27 @@ export default {
         self.file_hash = hash
         self.hash_state = "right"
       }
+    },
+    upload: function() {
+      console.log(this.$refs.upload_file.value)
+      // this.$refs.upload.submit();
+      let param = new FormData() 
+      param.append('file', this.upload_file)       // 通过append向form对象添加数据
+      param.append("hash", this.file_hash); // 添加form表单中其他数据
+      let config = {
+         headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post("/api/upload/",param, config).then((res)=>{
+        console.log(res)
+        // if(res.succeed){
+          
+        //     this.$message.success("添加成功")  //需要引入elemrnt
+        // }else{
+        //       this.$message.warning("添加失败")
+        // }
+      }).catch((err)=>{
+            this.$message.warning("图片上传失败，请重新上传!")
+      })
     }
   }
 }
